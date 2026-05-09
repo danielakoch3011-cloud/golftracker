@@ -1,0 +1,17 @@
+{
+  "name": "golftracker",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "vite",
+    "dev": "vite"
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "latest",
+    "vite": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "recharts": "latest"
+  },
+  "devDependencies": {}
+}

@@ -293,9 +293,152 @@ function MiniInput({ label, value, onChange }) {
 
 function Stats({ rounds }) {
   const [courseKey, setCourseKey] = useState("maxx");
+  const [selectedHole, setSelectedHole] = useState(1);
   const courseRounds = sortRounds(rounds).filter((r) => r.courseKey === courseKey);
-  const replay = courseRounds[0]?.holes?.map((score, i) => ({ hole: `L${i + 1}`, score, par: courses[courseKey].holes[i].par })) || [];
-  return <div className="space-y-6"><Card><div className="mb-5 flex flex-wrap items-center justify-between gap-4"><div><div className="text-lg font-bold">Performance Heatmap</div><div className="mt-1 text-sm font-medium text-slate-500">Kursanalyse im Dashboard-Look.</div></div><div className="flex rounded-2xl bg-slate-100 p-1">{Object.entries(courses).map(([key, course]) => <button key={key} onClick={() => setCourseKey(key)} className={cn("rounded-xl px-4 py-2 text-xs font-bold", courseKey === key ? "bg-white text-slate-950 shadow-sm" : "text-slate-500")}>{course.name}</button>)}</div></div><div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-9">{courses[courseKey].holes.map((h, i) => { const scores = courseRounds.map((r) => r.holes[i]); const v = avg(scores); return <div key={h.n} className="rounded-[1.2rem] bg-white p-4 ring-1 ring-slate-200"><div className="text-sm font-bold text-slate-500">Loch</div><div className="mt-1 text-4xl font-bold">{h.n}</div><div className="mt-3 text-sm font-semibold text-slate-600">Ø {v.toFixed(1)}</div><div className="mt-1 text-xs text-slate-500">{h.focus}</div></div>; })}</div></Card><Card><div className="mb-5 text-lg font-bold">Round Replay</div><div className="h-80"><ResponsiveContainer width="100%" height="100%"><LineChart data={replay}><XAxis dataKey="hole" axisLine={false} tickLine={false} /><YAxis axisLine={false} tickLine={false} /><Tooltip /><Line type="monotone" dataKey="score" stroke="#166534" strokeWidth={3} /></LineChart></ResponsiveContainer></div></Card></div>;
+  const course = courses[courseKey];
+
+  const selectedHoleData = course.holes[selectedHole - 1];
+  const holeTrend = courseRounds.slice().reverse().map((r, i) => ({
+    round: i + 1,
+    score: Number(r.holes?.[selectedHole - 1]) || null,
+    date: r.date,
+  }));
+  const holeAvg = avg(courseRounds.map((r) => Number(r.holes?.[selectedHole - 1]))).toFixed(1);
+
+  const replay = courseRounds[0]?.holes?.map((score, i) => ({
+    hole: `L${i + 1}`,
+    score,
+    par: course.holes[i].par,
+  })) || [];
+
+  return (
+    <div className="space-y-6">
+      <Card>
+        <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <div className="text-lg font-bold">Performance Heatmap</div>
+            <div className="mt-1 text-sm font-medium text-slate-500">Klicke auf ein Loch, um den historischen Verlauf zu sehen.</div>
+          </div>
+          <div className="flex rounded-2xl bg-slate-100 p-1">
+            {Object.entries(courses).map(([key, course]) => (
+              <button
+                key={key}
+                onClick={() => {
+                  setCourseKey(key);
+                  setSelectedHole(1);
+                }}
+                className={cn("rounded-xl px-4 py-2 text-xs font-bold", courseKey === key ? "bg-white text-slate-950 shadow-sm" : "text-slate-500")}
+              >
+                {course.name}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-9">
+          {course.holes.map((h, i) => {
+            const scores = courseRounds.map((r) => Number(r.holes?.[i])).filter(Number.isFinite);
+            const v = avg(scores);
+            const miniTrend = courseRounds.slice().reverse().map((r, index) => ({
+              round: index + 1,
+              score: Number(r.holes?.[i]) || null,
+            }));
+
+            return (
+              <button
+                key={h.n}
+                onClick={() => setSelectedHole(h.n)}
+                className={cn(
+                  "rounded-[1.2rem] bg-white p-4 text-left ring-1 transition hover:-translate-y-[2px] hover:shadow-md",
+                  selectedHole === h.n ? "ring-2 ring-emerald-600" : "ring-slate-200"
+                )}
+              >
+                <div className="text-sm font-bold text-slate-500">Loch</div>
+                <div className="mt-1 text-4xl font-bold">{h.n}</div>
+                <div className="mt-3 text-sm font-semibold text-slate-600">Ø {v.toFixed(1)}</div>
+                <div className="mt-1 text-xs text-slate-500">{h.focus}</div>
+
+                <div className="mt-4 h-14">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={miniTrend}>
+                      <Line type="monotone" dataKey="score" stroke="#166534" strokeWidth={2} dot={false} />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </Card>
+
+      <div className="grid gap-6 xl:grid-cols-[1fr_360px]">
+        <Card>
+          <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <div className="text-lg font-bold">Loch {selectedHole} Verlauf</div>
+              <div className="mt-1 text-sm font-semibold text-slate-500">
+                {course.name} · Par {selectedHoleData.par} · HCP {selectedHoleData.hcp} · Ø {holeAvg}
+              </div>
+            </div>
+            <div className="rounded-full bg-emerald-50 px-4 py-2 text-sm font-bold text-emerald-800">
+              {selectedHoleData.focus}
+            </div>
+          </div>
+
+          <div className="h-80 rounded-[1.5rem] bg-gradient-to-b from-emerald-50/70 to-white p-4 ring-1 ring-emerald-100">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={holeTrend} margin={{ left: 4, right: 16, top: 8, bottom: 4 }}>
+                <defs>
+                  <linearGradient id={`statsHoleFill-${selectedHole}`} x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#166534" stopOpacity={0.2} />
+                    <stop offset="100%" stopColor="#166534" stopOpacity={0.02} />
+                  </linearGradient>
+                </defs>
+                <XAxis dataKey="round" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: "#64748b" }} />
+                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: "#64748b" }} />
+                <Tooltip contentStyle={{ borderRadius: 14, border: "1px solid #e2e8f0", fontSize: 12 }} />
+                <Area type="monotone" dataKey="score" stroke="#166534" strokeWidth={2.5} fill={`url(#statsHoleFill-${selectedHole})`} dot={{ r: 3, strokeWidth: 1, fill: "#fff" }} />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </Card>
+
+        <Card>
+          <div className="text-lg font-bold">Loch-Analyse</div>
+          <div className="mt-5 space-y-3">
+            <div className="rounded-2xl bg-slate-50 p-4 ring-1 ring-slate-200">
+              <div className="text-xs font-bold uppercase tracking-[0.14em] text-slate-500">Durchschnitt</div>
+              <div className="mt-2 text-4xl font-bold">{holeAvg}</div>
+            </div>
+            <div className="rounded-2xl bg-emerald-50 p-4 ring-1 ring-emerald-100">
+              <div className="text-xs font-bold uppercase tracking-[0.14em] text-emerald-700">Fokus</div>
+              <div className="mt-2 text-xl font-bold text-emerald-900">{selectedHoleData.focus}</div>
+            </div>
+            <div className="rounded-2xl bg-white p-4 ring-1 ring-slate-200">
+              <div className="text-xs font-bold uppercase tracking-[0.14em] text-slate-500">AI Hinweis</div>
+              <p className="mt-2 text-sm font-semibold leading-6 text-slate-700">
+                Ziel auf Loch {selectedHole}: Score stabilisieren, Risiko reduzieren und den historischen Durchschnitt Schritt für Schritt drücken.
+              </p>
+            </div>
+          </div>
+        </Card>
+      </div>
+
+      <Card>
+        <div className="mb-5 text-lg font-bold">Round Replay</div>
+        <div className="h-80">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={replay}>
+              <XAxis dataKey="hole" axisLine={false} tickLine={false} />
+              <YAxis axisLine={false} tickLine={false} />
+              <Tooltip />
+              <Line type="monotone" dataKey="score" stroke="#166534" strokeWidth={3} />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </Card>
+    </div>
+  );
 }
 
 function LiveRound({ rounds }) {

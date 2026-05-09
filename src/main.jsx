@@ -1,9 +1,5 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import GolfTrackUnicorn from "../golf_track_unicorn.jsx";
+import App from "./App.jsx";
 
-ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
-    <GolfTrackUnicorn />
-  </React.StrictMode>
-);
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);

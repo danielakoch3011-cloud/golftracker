@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "@vitejs/plugin-react": "latest",
-    "vite": "latest",
+    "build": "vite build"
     "react": "latest",
     "react-dom": "latest",
     "recharts": "latest"

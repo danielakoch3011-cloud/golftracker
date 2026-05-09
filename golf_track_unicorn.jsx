@@ -584,7 +584,7 @@ function Tools({ rounds, setRounds }) {
   return <div className="grid gap-6 md:grid-cols-3"><Card><div className="text-2xl font-bold">JSON Export</div><p className="mt-3 text-sm leading-6 text-slate-600">Kopiert deine Rundendaten.</p><button onClick={() => navigator.clipboard?.writeText(json)} className="mt-6 rounded-2xl bg-emerald-800 px-5 py-3 text-sm font-bold text-white">Export kopieren</button></Card><Card><div className="text-2xl font-bold">Demo Reset</div><p className="mt-3 text-sm leading-6 text-slate-600">Setzt die App zurück.</p><button onClick={() => { setRounds(demoRounds); persist(demoRounds); }} className="mt-6 rounded-2xl bg-slate-100 px-5 py-3 text-sm font-bold text-slate-700">Zurücksetzen</button></Card><Card><div className="text-2xl font-bold">Vision Ready</div><p className="mt-3 text-sm leading-6 text-slate-600">OCR kann später über Backend angebunden werden.</p></Card></div>;
 }
 
-export default function GolfTrackUnicorn() {
+export default function App()
   const [tab, setTab] = useState("home");
   const [rounds, setRounds] = useState(loadRounds);
   const screen = { home: <Home rounds={rounds} />, round: <RoundEntry rounds={rounds} setRounds={setRounds} />, stats: <Stats rounds={rounds} />, live: <LiveRound rounds={rounds} />, coach: <CoachScreen rounds={rounds} />, plan: <Plan rounds={rounds} />, tools: <Tools rounds={rounds} setRounds={setRounds} /> }[tab];

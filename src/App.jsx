@@ -304,18 +304,27 @@ function LiveRound({ rounds }) {
   const [score, setScore] = useState(4);
   const currentCourse = courses.maxx;
   const current = currentCourse.holes[hole - 1];
+  const courseRounds = sortRounds(rounds).filter((r) => r.courseKey === "maxx");
+  const holeTrend = courseRounds.slice().reverse().map((r, i) => ({
+    round: i + 1,
+    score: Number(r.holes?.[hole - 1]) || null,
+    date: r.date,
+  }));
+  const holeAvg = avg(courseRounds.map((r) => Number(r.holes?.[hole - 1]))).toFixed(1);
 
   const nextHole = () => {
     if (hole < 9) {
-      setHole(hole + 1);
-      setScore(current.par);
+      const next = hole + 1;
+      setHole(next);
+      setScore(currentCourse.holes[next - 1].par);
     }
   };
 
   const prevHole = () => {
     if (hole > 1) {
-      setHole(hole - 1);
-      setScore(current.par);
+      const prev = hole - 1;
+      setHole(prev);
+      setScore(currentCourse.holes[prev - 1].par);
     }
   };
 
@@ -400,7 +409,32 @@ function LiveRound({ rounds }) {
       </Card>
 
       <Card>
-        <div className="text-lg font-bold">Live Empfehlungen</div>
+        <div className="flex items-center justify-between gap-4">
+          <div>
+            <div className="text-lg font-bold">Loch {hole} Verlauf</div>
+            <div className="mt-1 text-sm font-semibold text-slate-500">Ø {holeAvg} · historische Scores</div>
+          </div>
+          <div className="rounded-full bg-emerald-50 px-4 py-2 text-sm font-bold text-emerald-800">Par {current.par}</div>
+        </div>
+
+        <div className="mt-5 h-56 rounded-[1.5rem] bg-gradient-to-b from-emerald-50/70 to-white p-4 ring-1 ring-emerald-100">
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={holeTrend}>
+              <defs>
+                <linearGradient id={`liveHoleFill-${hole}`} x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#166534" stopOpacity={0.2} />
+                  <stop offset="100%" stopColor="#166534" stopOpacity={0.02} />
+                </linearGradient>
+              </defs>
+              <XAxis dataKey="round" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: "#64748b" }} />
+              <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: "#64748b" }} />
+              <Tooltip contentStyle={{ borderRadius: 14, border: "1px solid #e2e8f0", fontSize: 12 }} />
+              <Area type="monotone" dataKey="score" stroke="#166534" strokeWidth={2.5} fill={`url(#liveHoleFill-${hole})`} dot={{ r: 3, strokeWidth: 1, fill: "#fff" }} />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+
+        <div className="mt-8 text-lg font-bold">Live Empfehlungen</div>
 
         <div className="mt-6 space-y-4">
           {[

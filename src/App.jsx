@@ -209,10 +209,6 @@ function MiniInput({ label, value, onChange }) {
   return <label className="rounded-[1.2rem] bg-white p-4 ring-1 ring-slate-200"><div className="text-xs font-bold uppercase tracking-[0.14em] text-slate-600">{label}</div><input value={value} onChange={(e) => onChange(e.target.value)} className="mt-2 w-full bg-transparent text-2xl font-bold outline-none" /></label>;
 }
 function BarRow({ label, value }) {
-  return <div><div className="mb-2 flex justify-between text-sm font-semibold text-slate-600"><span>{label}</span><span>{Math.round(value)}%</span></div><div className="h-2 rounded-full bg-slate-100"><div className="h-2 rounded-full bg-emerald-800" style={{ width: `${Math.max(6, Math.min(100, value))}%` }} /></div></div>;
-}
-
-function BarRow({ label, value }) {
   const safeValue = Math.max(6, Math.min(100, Number(value) || 0));
   return (
     <div>

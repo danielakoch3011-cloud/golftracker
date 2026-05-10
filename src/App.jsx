@@ -236,7 +236,6 @@ function MiniInput({ label, value, onChange, type = "text" }) {
     </label>
   );
 }
-
 function Shell({ tab, setTab, children }) {
   const active = modules.find(([id]) => id === tab)?.[1] || "Übersicht";
   return (

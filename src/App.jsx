@@ -87,7 +87,25 @@ const eur = (v) => `${Math.round(Number(v) || 0)}€`;
 
 function loadRounds() {
   try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || demoRounds;
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    if (!Array.isArray(saved) || saved.length === 0) return demoRounds;
+
+    const clean = saved
+      .filter((r) => r && courses[r.courseKey] && Array.isArray(r.holes) && r.holes.length === 9)
+      .map((r) => ({
+        ...r,
+        id: r.id || uid(),
+        date: r.date || new Date().toISOString().slice(0, 10),
+        total: Number(r.total) || r.holes.reduce((s, v) => s + (Number(v) || 0), 0),
+        fir: Number(r.fir) || 0,
+        gir: Number(r.gir) || 0,
+        putts: Number(r.putts) || 0,
+        costs: { greenfee: 0, range: 0, food: 0, tournament: 0, other: 0, ...(r.costs || {}) },
+        mental: { focus: 5, energy: 5, frustration: 5, confidence: 5, management: 5, ...(r.mental || {}) },
+        courseRating: { overall: 5, greens: 5, fairways: 5, atmosphere: 5, playAgain: true, ...(r.courseRating || {}) },
+      }));
+
+    return clean.length ? clean : demoRounds;
   } catch {
     return demoRounds;
   }
@@ -205,8 +223,18 @@ function Kpi({ icon, label, value, sub, trend }) {
     </Card>
   );
 }
-function MiniInput({ label, value, onChange }) {
-  return <label className="rounded-[1.2rem] bg-white p-4 ring-1 ring-slate-200"><div className="text-xs font-bold uppercase tracking-[0.14em] text-slate-600">{label}</div><input value={value} onChange={(e) => onChange(e.target.value)} className="mt-2 w-full bg-transparent text-2xl font-bold outline-none" /></label>;
+function MiniInput({ label, value, onChange, type = "text" }) {
+  return (
+    <label className="rounded-[1.2rem] bg-white p-4 ring-1 ring-slate-200">
+      <div className="text-xs font-bold uppercase tracking-[0.14em] text-slate-600">{label}</div>
+      <input
+        type={type}
+        value={value ?? ""}
+        onChange={(e) => onChange(e.target.value)}
+        className="mt-3 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-4 text-2xl font-bold outline-none transition focus:border-emerald-500 focus:bg-white"
+      />
+    </label>
+  );
 }
 function BarRow({ label, value }) {
   const safeValue = Math.max(6, Math.min(100, Number(value) || 0));
@@ -517,7 +545,7 @@ function FinanceScreen({ rounds }) {
         {sorted.slice(0, 8).map((r) => (
           <div key={r.id} className="grid grid-cols-4 border-t py-3 text-sm font-semibold">
             <span>{r.date}</span>
-            <span>{courses[r.courseKey].name}</span>
+            <span>{(courses[r.courseKey]?.name || "Unbekannter Platz")}</span>
             <span className="text-right">{r.total}</span>
             <span className="text-right text-emerald-800">{eur(roundCost(r))}</span>
           </div>

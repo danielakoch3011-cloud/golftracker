@@ -1,14 +1,5 @@
 import React, { useState } from "react";
-import {
-  Area,
-  AreaChart,
-  Line,
-  LineChart,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
+import { courses, financeSettings, modules } from "./data";
 
 const STORAGE_KEY = "golftrack_unicorn_rounds_v2";
 const TRAINING_KEY = "golftrack_unicorn_trainings_v1";

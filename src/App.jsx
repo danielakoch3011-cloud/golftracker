@@ -1,3 +1,8 @@
+import Card from "./components/Card";
+import Kpi from "./components/Kpi";
+import Trend from "./components/Trend";
+import MiniInput from "./components/MiniInput";
+
 import React, { useState } from "react";
 import {
   Area,

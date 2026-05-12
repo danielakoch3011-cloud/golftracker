@@ -1,0 +1,12 @@
+cn
+avg
+sortRounds
+uid
+eur
+roundCost
+mentalScore
+trainingCost
+metrics
+financeMetrics
+mentalMetrics
+analysis

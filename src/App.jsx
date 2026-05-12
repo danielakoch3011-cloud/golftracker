@@ -162,50 +162,6 @@ function analysis(rounds) {
     trend: sorted.length > 3 ? avg(sorted.slice(3, 6).map((r) => r.total)) - avg(sorted.slice(0, 3).map((r) => r.total)) : 0,
   };
 }
-
-function Card({ children, className = "" }) {
-  return <section className={cn("rounded-[1.35rem] border border-slate-200 bg-white p-6 shadow-[0_18px_45px_rgba(15,23,42,0.04)]", className)}>{children}</section>;
-}
-function Trend({ data, area = false, domain }) {
-  return (
-    <ResponsiveContainer width="100%" height="100%">
-      {area ? (
-        <AreaChart data={data} margin={{ left: 4, right: 16, top: 8, bottom: 4 }}>
-          <defs><linearGradient id="fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#166534" stopOpacity={0.18} /><stop offset="100%" stopColor="#166534" stopOpacity={0.02} /></linearGradient></defs>
-          <XAxis dataKey="round" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: "#64748b" }} />
-          <YAxis domain={domain} axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: "#64748b" }} />
-          <Tooltip contentStyle={{ borderRadius: 14, border: "1px solid #e2e8f0", fontSize: 12 }} />
-          <Area type="monotone" dataKey="score" stroke="#166534" strokeWidth={2.5} fill="url(#fill)" />
-        </AreaChart>
-      ) : (
-        <LineChart data={data}><Line type="monotone" dataKey="score" stroke="#166534" strokeWidth={2} dot={false} /></LineChart>
-      )}
-    </ResponsiveContainer>
-  );
-}
-function Kpi({ icon, label, value, sub, trend }) {
-  return (
-    <Card className="min-h-[170px]">
-      <div className="flex items-center gap-3"><div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-50 text-emerald-800">{icon}</div><div className="text-sm font-bold text-slate-700">{label}</div></div>
-      <div className="mt-5 text-4xl font-bold">{value}</div>
-      {trend && <div className="mt-4 h-10"><Trend data={trend} /></div>}
-      {sub && <div className="mt-3 text-sm font-medium text-slate-500">{sub}</div>}
-    </Card>
-  );
-}
-function MiniInput({ label, value, onChange, type = "text" }) {
-  return (
-    <label className="rounded-[1.2rem] bg-white p-4 ring-1 ring-slate-200">
-      <div className="text-xs font-bold uppercase tracking-[0.14em] text-slate-600">{label}</div>
-      <input
-        type={type}
-        value={value ?? ""}
-        onChange={(e) => onChange(e.target.value)}
-        className="mt-3 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-4 text-2xl font-bold outline-none transition focus:border-emerald-500 focus:bg-white"
-      />
-    </label>
-  );
-}
 function BarRow({ label, value }) {
   const safeValue = Math.max(6, Math.min(100, Number(value) || 0));
   return (
@@ -220,7 +176,6 @@ function BarRow({ label, value }) {
     </div>
   );
 }
-
 function Shell({ tab, setTab, children }) {
   const active = modules.find(([id]) => id === tab)?.[1] || "Übersicht";
   return (

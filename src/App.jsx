@@ -1,33 +1,19 @@
 import React, { useState } from "react";
+import {
+  Area,
+  AreaChart,
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
+
 import { courses, financeSettings, modules } from "./data";
 
 const STORAGE_KEY = "golftrack_unicorn_rounds_v2";
 const TRAINING_KEY = "golftrack_unicorn_trainings_v1";
-
-const courses = {
-  maxx: {
-    name: "GolfMaxX Tuttenhof",
-    holes: [
-      [1, 4, 12, "Sicherer Start"], [2, 3, 8, "Mitte Grün"], [3, 3, 16, "2 Putts"],
-      [4, 4, 2, "Kein Risiko"], [5, 3, 14, "Tempo"], [6, 5, 1, "Bogey akzeptieren"],
-      [7, 3, 18, "Routine"], [8, 4, 4, "Fairway zuerst"], [9, 3, 10, "Ruhig finishen"],
-    ].map(([n, par, hcp, focus]) => ({ n, par, hcp, focus })),
-  },
-  doerfl: {
-    name: "GC Tuttendörfl",
-    holes: [
-      [1, 4, 9, "Ruhiger Start"], [2, 3, 15, "Mitte Grün"], [3, 5, 3, "Ball im Spiel"],
-      [4, 4, 1, "Konservativ"], [5, 3, 17, "Nicht kurz"], [6, 4, 5, "Fairway"],
-      [7, 4, 11, "Kontrolle"], [8, 3, 13, "2 Putts"], [9, 5, 7, "Heimspielen"],
-    ].map(([n, par, hcp, focus]) => ({ n, par, hcp, focus })),
-  },
-};
-
-const financeSettings = {
-  membershipMonthly: 143,
-  rangeBucketPrice: 3.3,
-  trainerHour: 48,
-};
 
 const demoRounds = [
   ["2026-04-06", "maxx", 66, [8,7,7,8,6,9,7,8,6], 30, 18, 3.4, "Erste dokumentierte Runde", [29,8,12,0,0], [4,5,7,3,4], [7,6,7,7,true]],
@@ -54,18 +40,6 @@ const demoRounds = [
   mental: { focus: m[0], energy: m[1], frustration: m[2], confidence: m[3], management: m[4] },
   courseRating: { overall: cr[0], greens: cr[1], fairways: cr[2], atmosphere: cr[3], playAgain: cr[4] },
 }));
-
-const modules = [
-  ["home", "Übersicht", "⌂"],
-  ["round", "Runden", "⚑"],
-  ["stats", "Statistiken", "▥"],
-  ["live", "Live Caddie", "◉"],
-  ["coach", "AI Coach", "✦"],
-  ["finance", "Golf Finance", "€"],
-  ["mental", "Mental", "◌"],
-  ["plan", "Ziele", "◎"],
-  ["tools", "Berichte", "▤"],
-];
 
 const cn = (...x) => x.filter(Boolean).join(" ");
 const avg = (v) => {

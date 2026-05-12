@@ -334,12 +334,49 @@ function Stats({ rounds }) {
   return <div className="space-y-6"><Card><div className="mb-5 flex justify-between gap-4"><div><div className="text-lg font-bold">Performance Heatmap</div><div className="text-sm text-slate-500">Klick auf ein Loch für Details.</div></div><div className="flex rounded-2xl bg-slate-100 p-1">{Object.entries(courses).map(([k,c])=><button key={k} onClick={()=>{setCourseKey(k);setHole(1);}} className={cn("rounded-xl px-4 py-2 text-xs font-bold",courseKey===k?"bg-white":"text-slate-500")}>{c.name}</button>)}</div></div><div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-9">{course.holes.map((x,i)=>{const mini=rs.slice().reverse().map((r,j)=>({round:j+1,score:r.holes?.[i]}));return <button key={x.n} onClick={()=>setHole(x.n)} className={cn("rounded-xl bg-white p-4 text-left ring-1 ring-slate-200",hole===x.n&&"ring-2 ring-emerald-600")}><div className="text-sm font-bold text-slate-500">Loch</div><div className="text-4xl font-bold">{x.n}</div><div className="mt-2 text-sm font-semibold">Ø {avg(rs.map(r=>r.holes?.[i])).toFixed(1)}</div><div className="mt-3 h-12"><Trend data={mini}/></div></button>})}</div></Card><div className="grid gap-6 xl:grid-cols-[1fr_360px]"><Card><div className="mb-5 text-lg font-bold">Loch {hole} Verlauf</div><div className="h-80"><Trend data={trend} area /></div></Card><Card><div className="text-lg font-bold">Loch-Analyse</div><div className="mt-5 rounded-2xl bg-emerald-50 p-4"><b>{h.focus}</b><p className="mt-2 text-sm text-slate-600">Par {h.par} · HCP {h.hcp}</p></div></Card></div><Card><div className="mb-5 text-lg font-bold">Round Replay</div><div className="h-80"><ResponsiveContainer width="100%" height="100%"><LineChart data={replay}><XAxis dataKey="hole"/><YAxis/><Tooltip/><Line type="monotone" dataKey="score" stroke="#166534" strokeWidth={3}/></LineChart></ResponsiveContainer></div></Card></div>;
 }
 
-function LiveRound({ rounds }) {
-  const [hole,setHole]=useState(1), [scores,setScores]=useState({}), [sun,setSun]=useState(false);
+function LiveRound({ rounds, setRounds }) {
+  const [hole,setHole]=useState(1), [scores,setScores]=useState({}), [sun,setSun]=useState(false), [saved,setSaved]=useState(false);
   const course=courses.maxx, h=course.holes[hole-1];
   const save=(v)=>{setScores({...scores,[hole]:v}); if(window.speechSynthesis){speechSynthesis.speak(new SpeechSynthesisUtterance(`Loch ${hole}, Score ${v}`));}};
   const total=Object.values(scores).reduce((s,v)=>s+v,0), played=Object.keys(scores).length;
-  return <div className="grid gap-6 xl:grid-cols-[1.15fr_.85fr]"><Card className={cn("bg-slate-950 p-8 text-white",sun&&"bg-white text-black")}><div className="flex justify-between"><div><div className="text-xs font-bold uppercase tracking-[0.25em] text-emerald-400">Live Round</div><div className="mt-5 text-8xl font-bold">{hole}</div><div>Par {h.par} · HCP {h.hcp}</div></div><button onClick={()=>setSun(!sun)} className="h-12 rounded-full bg-emerald-500 px-5 font-bold text-black">☀</button></div><div className="mt-8 rounded-3xl bg-white/10 p-6"><b>AI Caddie Briefing</b><p className="mt-3 text-2xl font-bold">{h.focus}. Kontrolle vor Risiko.</p></div><div className="mt-8 grid grid-cols-3 gap-4">{[h.par-1,h.par,h.par+1].map((v,i)=><button key={v} onClick={()=>save(v)} className="rounded-3xl bg-emerald-500 px-4 py-10 text-4xl font-black text-black">{v}<div className="text-xs">{["Birdie","Par","Bogey"][i]}</div></button>)}</div><div className="mt-6 grid grid-cols-2 gap-3"><button onClick={()=>setHole(Math.max(1,hole-1))} className="rounded-2xl bg-white/10 p-4 font-bold">← Zurück</button><button onClick={()=>setHole(Math.min(9,hole+1))} className="rounded-2xl bg-emerald-500 p-4 font-bold text-black">Weiter →</button></div></Card><Card><div className="text-lg font-bold">Live Status</div><div className="mt-6 grid gap-4"><Kpi icon="Σ" label="Live Score" value={played?total:"—"} sub={`${played}/9 gespielt`}/><Kpi icon="◉" label="Aktuelles Loch" value={hole} sub={h.focus}/></div></Card></div>;
+  const finishRound=()=>{
+    if(played!==9) return;
+    const holes=Array.from({length:9},(_,i)=>Number(scores[i+1])||0);
+    const payload={
+      id:uid(),
+      date:new Date().toISOString().slice(0,10),
+      courseKey:"maxx",
+      total,
+      holes,
+      fir:0,
+      gir:0,
+      putts:0,
+      note:"Automatisch aus Live Caddie gespeichert",
+      costs:{greenfee:0,range:0,food:0,tournament:0,other:0},
+      mental:{focus:7,energy:7,frustration:3,confidence:7,management:7},
+      courseRating:{overall:8,greens:7,fairways:7,atmosphere:8,playAgain:true},
+    };
+    const updated=sortRounds([payload,...rounds]);
+    setRounds(updated);
+    persist(updated);
+    setSaved(true);
+  };
+  return <div className="grid gap-6 xl:grid-cols-[1.15fr_.85fr]"><Card className={cn("bg-slate-950 p-8 text-white",sun&&"bg-white text-black")}><div className="flex justify-between"><div><div className="text-xs font-bold uppercase tracking-[0.25em] text-emerald-400">Live Round</div><div className="mt-5 text-8xl font-bold">{hole}</div><div>Par {h.par} · HCP {h.hcp}</div></div><button onClick={()=>setSun(!sun)} className="h-12 rounded-full bg-emerald-500 px-5 font-bold text-black">☀</button></div><div className="mt-8 rounded-3xl bg-white/10 p-6"><b>AI Caddie Briefing</b><p className="mt-3 text-2xl font-bold">{h.focus}. Kontrolle vor Risiko.</p></div><div className="mt-8 grid grid-cols-3 gap-4">{[h.par-1,h.par,h.par+1].map((v,i)=><button key={v} onClick={()=>save(v)} className="rounded-3xl bg-emerald-500 px-4 py-10 text-4xl font-black text-black">{v}<div className="text-xs">{["Birdie","Par","Bogey"][i]}</div></button>)}</div><div className="mt-6 grid grid-cols-2 gap-3"><button onClick={()=>setHole(Math.max(1,hole-1))} className="rounded-2xl bg-white/10 p-4 font-bold">← Zurück</button><button onClick={()=>setHole(Math.min(9,hole+1))} className="rounded-2xl bg-emerald-500 p-4 font-bold text-black">Weiter →</button></div>
+
+<div className="mt-4 grid gap-3">
+  <button
+    onClick={finishRound}
+    disabled={played!==9 || saved}
+    className={cn(
+      "rounded-2xl p-4 text-sm font-bold transition",
+      played===9 && !saved
+        ? "bg-white text-black"
+        : "bg-white/10 text-white/40"
+    )}
+  >
+    {saved ? "Runde gespeichert ✓" : "Live Runde speichern"}
+  </button>
+</div></Card><Card><div className="text-lg font-bold">Live Status</div><div className="mt-6 grid gap-4"><Kpi icon="Σ" label="Live Score" value={played?total:"—"} sub={`${played}/9 gespielt`}/><Kpi icon="◉" label="Aktuelles Loch" value={hole} sub={h.focus}/></div></Card></div>;
 }
 
 function CoachScreen({ rounds }) {
@@ -576,6 +613,6 @@ function Tools({ rounds,setRounds }) { return <div className="grid gap-6 md:grid
 export default function App() {
   const [tab,setTab]=useState("home");
   const [rounds,setRounds]=useState(loadRounds);
-  const screens={home:<Home rounds={rounds}/>,round:<RoundEntry rounds={rounds} setRounds={setRounds}/>,stats:<Stats rounds={rounds}/>,live:<LiveRound rounds={rounds}/>,coach:<CoachScreen rounds={rounds}/>,finance:<FinanceScreen rounds={rounds}/>,mental:<MentalScreen rounds={rounds}/>,plan:<Plan/>,tools:<Tools rounds={rounds} setRounds={setRounds}/>};
+  const screens={home:<Home rounds={rounds}/>,round:<RoundEntry rounds={rounds} setRounds={setRounds}/>,stats:<Stats rounds={rounds}/>,live:<LiveRound rounds={rounds} setRounds={setRounds}/>,coach:<CoachScreen rounds={rounds}/>,finance:<FinanceScreen rounds={rounds}/>,mental:<MentalScreen rounds={rounds}/>,plan:<Plan/>,tools:<Tools rounds={rounds} setRounds={setRounds}/>};
   return <Shell tab={tab} setTab={setTab}>{screens[tab]}</Shell>;
 }

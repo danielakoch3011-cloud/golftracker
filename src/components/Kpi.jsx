@@ -26,10 +26,9 @@ export default function Kpi({
       </div>
 
       {trend && (
-        <div className="mt-4 h-10">
-          <Trend data={trend} />
-        </div>
-      )}
+        <div className="mt-4 h-[60px] w-full">
+  <Trend data={trend} />
+</div>
 
       {sub && (
         <div className="mt-3 text-sm font-medium text-slate-500">

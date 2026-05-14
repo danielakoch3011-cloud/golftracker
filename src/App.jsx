@@ -386,6 +386,7 @@ export default function App() {
     eur={eur}
     mentalScore={mentalScore}
   />
+),  home: <div>HOME TEMP</div>,
   };
   return <Shell tab={tab} setTab={setTab}>{screens[tab]}</Shell>;
 }

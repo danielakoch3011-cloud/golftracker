@@ -1,5 +1,5 @@
 import React from "react";
-import { cn } from "../utils";
+import { cn } from "../App";
 
 export default function Card({ children, className = "" }) {
   return (

@@ -208,6 +208,7 @@ function analysis(rounds) {
     latest: sorted[0],
     weakness: [...holes].sort((a, b) => b.overPar - a.overPar)[0],
   };
+}
 function Shell({ tab, setTab, children }) {
   const active = modules.find(([id]) => id === tab)?.[1] || "Übersicht";
   return (

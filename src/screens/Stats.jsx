@@ -65,8 +65,8 @@ export default function Stats({ rounds, courses, sortRounds, avg, cn }) {
   const diff = holeAvg - x.par;
 
   
-  let levelColor = "bg-emerald-100 text-emerald-800";
-  let cardStyle = "from-white to-emerald-50 border-emerald-200";
+  let levelColor = "bg-emerald-500/10 text-emerald-700";
+  let cardStyle = "from-white to-emerald-50/40 border-emerald-100";
 
   if (diff > 1 && diff <= 2.5) {
     
@@ -104,12 +104,6 @@ export default function Stats({ rounds, courses, sortRounds, avg, cn }) {
       <div className="mt-2 text-sm font-bold text-slate-500">
         Par {x.par} • HCP {x.hcp}
       </div>
-
-      <div className="mt-6">
-        <div className="text-xs font-bold uppercase tracking-[0.14em] text-slate-400">
-          Durchschnitt
-        </div>
-
         <div className="mt-1 text-3xl font-black">
           Ø {holeAvg.toFixed(1)}
         </div>

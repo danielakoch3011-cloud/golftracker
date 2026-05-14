@@ -1,7 +1,11 @@
 import React from "react";
-import { cn } from "../App";
 
-export default function Card({ children, className = "" }) {
+const cn = (...x) => x.filter(Boolean).join(" ");
+
+export default function Card({
+  children,
+  className = "",
+}) {
   return (
     <section
       className={cn(

@@ -1,23 +1,57 @@
 import React from "react";
+import {
+  Area,
+  AreaChart,
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 
-export default function MiniInput({
-  label,
-  value,
-  onChange,
-  type = "text",
+export default function Trend({
+  data,
+  area = false,
+  domain,
 }) {
   return (
-    <label className="rounded-[1.2rem] bg-white p-4 ring-1 ring-slate-200">
-      <div className="text-xs font-bold uppercase tracking-[0.14em] text-slate-600">
-        {label}
-      </div>
+    <ResponsiveContainer width="100%" height="100%">
+      {area ? (
+        <AreaChart
+          data={data}
+          margin={{ left: 4, right: 16, top: 8, bottom: 4 }}
+        >
+          <defs>
+            <linearGradient id="fill" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#166534" stopOpacity={0.18} />
+              <stop offset="100%" stopColor="#166534" stopOpacity={0.02} />
+            </linearGradient>
+          </defs>
 
-      <input
-        type={type}
-        value={value ?? ""}
-        onChange={(e) => onChange(e.target.value)}
-        className="mt-3 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-4 text-2xl font-bold outline-none transition focus:border-emerald-500 focus:bg-white"
-      />
-    </label>
+          <XAxis dataKey="round" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: "#64748b" }} />
+          <YAxis domain={domain} axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: "#64748b" }} />
+          <Tooltip contentStyle={{ borderRadius: 14, border: "1px solid #e2e8f0", fontSize: 12 }} />
+
+          <Area
+            type="monotone"
+            dataKey="score"
+            stroke="#166534"
+            strokeWidth={2.5}
+            fill="url(#fill)"
+          />
+        </AreaChart>
+      ) : (
+        <LineChart data={data}>
+          <Line
+            type="monotone"
+            dataKey="score"
+            stroke="#166534"
+            strokeWidth={2}
+            dot={false}
+          />
+        </LineChart>
+      )}
+    </ResponsiveContainer>
   );
 }

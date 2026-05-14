@@ -59,7 +59,7 @@ export default function Stats({ rounds, courses, sortRounds, avg, cn }) {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-9">
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-5 2xl:grid-cols-9">
 {course.holes.map((x, i) => {
   const holeAvg = avg(rs.map((r) => r.holes?.[i]));
   const diff = holeAvg - x.par;
@@ -85,7 +85,7 @@ export default function Stats({ rounds, courses, sortRounds, avg, cn }) {
       key={x.n}
       onClick={() => setHole(x.n)}
       className={cn(
-        "rounded-3xl border bg-gradient-to-br p-5 text-left transition-all duration-200",
+        "min-h-[210px] rounded-3xl border bg-gradient-to-br p-4 text-left transition-all duration-200"
         cardStyle,
         hole === x.n &&
           "scale-[1.02] ring-2 ring-emerald-500 shadow-xl"

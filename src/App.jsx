@@ -341,7 +341,20 @@ export default function App() {
   />
 ),
   coach: <CoachScreen rounds={rounds} />,
-  finance: <FinanceScreen rounds={rounds} />,
+  finance: (
+  <FinanceScreen
+    rounds={rounds}
+    financeMetrics={financeMetrics}
+    sortRounds={sortRounds}
+    roundCost={roundCost}
+    trainingCost={trainingCost}
+    financeSettings={financeSettings}
+    eur={eur}
+    uid={uid}
+    loadTrainings={loadTrainings}
+    persistTrainings={persistTrainings}
+  />
+),
   mental: <MentalScreen rounds={rounds} />,
   plan: <Plan />,
   tools: <Tools rounds={rounds} setRounds={setRounds} />,

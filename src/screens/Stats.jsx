@@ -135,7 +135,6 @@ export default function Stats({ rounds, courses, sortRounds, avg, cn }) {
       </div>
     </button>
   );
-})}
           })}
         </div>
       </Card>

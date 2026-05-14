@@ -60,65 +60,59 @@ export default function Stats({ rounds, courses, sortRounds, avg, cn }) {
         </div>
 
         <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-5 2xl:grid-cols-9">
-{course.holes.map((x, i) => {
-  const holeAvg = avg(rs.map((r) => r.holes?.[i]));
-  const diff = holeAvg - x.par;
+          {course.holes.map((x, i) => {
+            const holeAvg = avg(rs.map((r) => r.holes?.[i]));
+            const diff = holeAvg - x.par;
 
-  
-  let levelColor = "bg-emerald-500/10 text-emerald-700";
-  let cardStyle = "from-white to-emerald-50/40 border-emerald-100";
+            let levelColor = "bg-emerald-500/10 text-emerald-700";
+            let cardStyle = "from-white to-emerald-50/40 border-emerald-100";
 
-  if (diff > 1 && diff <= 2.5) {
-    
-  levelColor = "bg-amber-500/10 text-amber-700";
-  cardStyle = "from-white to-amber-50/40 border-amber-100";
-  }
+            if (diff > 1 && diff <= 2.5) {
+              levelColor = "bg-amber-500/10 text-amber-700";
+              cardStyle = "from-white to-amber-50/40 border-amber-100";
+            }
 
-  if (diff > 2.5) {
-    
-  levelColor = "bg-rose-500/10 text-rose-700";
-  cardStyle = "from-white to-rose-50/40 border-rose-100";
-  }
+            if (diff > 2.5) {
+              levelColor = "bg-rose-500/10 text-rose-700";
+              cardStyle = "from-white to-rose-50/40 border-rose-100";
+            }
 
-  return (
-    <button
-      key={x.n}
-      onClick={() => setHole(x.n)}
-     className={cn(
-  "min-h-[210px] rounded-3xl border bg-gradient-to-br p-4 text-left transition-all duration-200",
-  cardStyle,
-  hole === x.n &&
-    "scale-[1.02] ring-2 ring-emerald-500 shadow-xl"
-)}
-    >
-      <div className="flex items-center justify-between">
-        <div className="text-xs font-bold uppercase tracking-[0.14em] text-slate-500">
-          Loch
-        </div>
-</div>
+            return (
+              <button
+                key={x.n}
+                onClick={() => setHole(x.n)}
+                className={cn(
+                  "min-h-[210px] rounded-3xl border bg-gradient-to-br p-4 text-left transition-all duration-200",
+                  cardStyle,
+                  hole === x.n &&
+                    "scale-[1.02] ring-2 ring-emerald-500 shadow-xl"
+                )}
+              >
+                <div className="text-xs font-bold uppercase tracking-[0.14em] text-slate-500">
+                  Loch
+                </div>
 
-      <div className="mt-3 text-6xl font-black">
-        {x.n}
-      </div>
+                <div className="mt-3 text-6xl font-black">{x.n}</div>
 
-      <div className="mt-2 text-sm font-bold text-slate-500">
-        Par {x.par} • HCP {x.hcp}
-      </div>
-        <div className="mt-1 text-3xl font-black">
-          Ø {holeAvg.toFixed(1)}
-        </div>
-      </div>
-      <div
-        className={cn(
-          "mt-4 inline-flex rounded-full px-3 py-1 text-xs font-bold",
-          levelColor
-        )}
-      >
-        {diff > 0 ? "+" : ""}
-        {diff.toFixed(1)} vs Par
-      </div>
-    </button>
-  );
+                <div className="mt-2 text-sm font-bold text-slate-500">
+                  Par {x.par} • HCP {x.hcp}
+                </div>
+
+                <div className="mt-7 text-3xl font-black">
+                  Ø {holeAvg.toFixed(1)}
+                </div>
+
+                <div
+                  className={cn(
+                    "mt-4 inline-flex rounded-full px-3 py-1 text-xs font-bold",
+                    levelColor
+                  )}
+                >
+                  {diff > 0 ? "+" : ""}
+                  {diff.toFixed(1)}
+                </div>
+              </button>
+            );
           })}
         </div>
       </Card>

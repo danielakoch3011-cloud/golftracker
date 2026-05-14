@@ -1,7 +1,14 @@
 import React, { useState } from "react";
 import Card from "../components/Card";
 import Trend from "../components/Trend";
-import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip } from "recharts";
+import {
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+} from "recharts";
 
 export default function Stats({
   rounds,
@@ -38,14 +45,14 @@ export default function Stats({
   return (
     <div className="space-y-6">
       <Card>
-        <div className="mb-5 flex justify-between gap-4">
+        <div className="mb-8 flex items-center justify-between">
           <div>
-            <div className="text-lg font-bold">
+            <div className="text-2xl font-bold">
               Performance Heatmap
             </div>
 
-            <div className="text-sm text-slate-500">
-              Klick auf ein Loch für Details.
+            <div className="mt-1 text-sm text-slate-500">
+              Wähle ein Loch für Details.
             </div>
           </div>
 
@@ -58,9 +65,9 @@ export default function Stats({
                   setHole(1);
                 }}
                 className={cn(
-                  "rounded-xl px-4 py-2 text-xs font-bold",
+                  "rounded-xl px-4 py-2 text-sm font-bold transition",
                   courseKey === k
-                    ? "bg-white"
+                    ? "bg-white shadow-sm"
                     : "text-slate-500"
                 )}
               >
@@ -72,41 +79,53 @@ export default function Stats({
 
         <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-9">
           {course.holes.map((x, i) => {
-            const mini = rs
-              .slice()
-              .reverse()
-              .map((r, j) => ({
-                round: j + 1,
-                score: r.holes?.[i],
-              }));
+            const holeAvg = avg(
+              rs.map((r) => r.holes?.[i])
+            );
+
+            const diff = holeAvg - x.par;
 
             return (
               <button
                 key={x.n}
                 onClick={() => setHole(x.n)}
                 className={cn(
-                  "rounded-xl bg-white p-4 text-left ring-1 ring-slate-200",
-                  hole === x.n &&
-                    "ring-2 ring-emerald-600"
+                  "rounded-2xl border bg-white p-5 text-left transition",
+                  hole === x.n
+                    ? "border-emerald-600 ring-2 ring-emerald-100"
+                    : "border-slate-200 hover:border-emerald-300"
                 )}
               >
-                <div className="text-sm font-bold text-slate-500">
+                <div className="text-xs font-bold uppercase tracking-[0.12em] text-slate-500">
                   Loch
                 </div>
 
-                <div className="text-4xl font-bold">
+                <div className="mt-2 text-5xl font-black">
                   {x.n}
                 </div>
 
-                <div className="mt-2 text-sm font-semibold">
-                  Ø{" "}
-                  {avg(
-                    rs.map((r) => r.holes?.[i])
-                  ).toFixed(1)}
-                </div>
+                <div className="mt-4 flex items-center justify-between">
+                  <div>
+                    <div className="text-xs font-bold uppercase tracking-[0.12em] text-slate-400">
+                      Durchschnitt
+                    </div>
 
-                <div className="mt-3 h-12">
-                  <Trend data={mini} />
+                    <div className="text-xl font-bold">
+                      Ø {holeAvg.toFixed(1)}
+                    </div>
+                  </div>
+
+                  <div
+                    className={cn(
+                      "rounded-full px-3 py-1 text-xs font-bold",
+                      diff <= 0
+                        ? "bg-emerald-100 text-emerald-800"
+                        : "bg-rose-100 text-rose-700"
+                    )}
+                  >
+                    {diff > 0 ? "+" : ""}
+                    {diff.toFixed(1)}
+                  </div>
                 </div>
               </button>
             );
@@ -116,37 +135,84 @@ export default function Stats({
 
       <div className="grid gap-6 xl:grid-cols-[1fr_360px]">
         <Card>
-          <div className="mb-5 text-lg font-bold">
-            Loch {hole} Verlauf
+          <div className="mb-6 flex items-center justify-between">
+            <div>
+              <div className="text-2xl font-bold">
+                Loch {hole} Verlauf
+              </div>
+
+              <div className="mt-1 text-sm text-slate-500">
+                Entwicklung deiner letzten Runden.
+              </div>
+            </div>
+
+            <div className="rounded-2xl bg-emerald-50 px-4 py-2 text-sm font-bold text-emerald-800">
+              Ø{" "}
+              {avg(
+                rs.map((r) => r.holes?.[hole - 1])
+              ).toFixed(1)}
+            </div>
           </div>
 
-          <div className="h-80">
+          <div className="h-[340px]">
             <Trend data={trend} area />
           </div>
         </Card>
 
         <Card>
-          <div className="text-lg font-bold">
+          <div className="text-2xl font-bold">
             Loch-Analyse
           </div>
 
-          <div className="mt-5 rounded-2xl bg-emerald-50 p-4">
-            <b>{h.focus}</b>
+          <div className="mt-6 rounded-3xl bg-emerald-50 p-6">
+            <div className="text-xs font-bold uppercase tracking-[0.16em] text-emerald-700">
+              Fokus
+            </div>
 
-            <p className="mt-2 text-sm text-slate-600">
-              Par {h.par} · HCP {h.hcp}
-            </p>
+            <div className="mt-3 text-2xl font-bold text-emerald-950">
+              {h.focus}
+            </div>
+
+            <div className="mt-5 grid grid-cols-2 gap-3">
+              <div className="rounded-2xl bg-white p-4">
+                <div className="text-xs font-bold uppercase tracking-[0.12em] text-slate-500">
+                  Par
+                </div>
+
+                <div className="mt-1 text-3xl font-black">
+                  {h.par}
+                </div>
+              </div>
+
+              <div className="rounded-2xl bg-white p-4">
+                <div className="text-xs font-bold uppercase tracking-[0.12em] text-slate-500">
+                  HCP
+                </div>
+
+                <div className="mt-1 text-3xl font-black">
+                  {h.hcp}
+                </div>
+              </div>
+            </div>
           </div>
         </Card>
       </div>
 
       <Card>
-        <div className="mb-5 text-lg font-bold">
-          Round Replay
+        <div className="mb-6 flex items-center justify-between">
+          <div>
+            <div className="text-2xl font-bold">
+              Round Replay
+            </div>
+
+            <div className="mt-1 text-sm text-slate-500">
+              Verlauf deiner letzten Runde.
+            </div>
+          </div>
         </div>
 
-        <div className="h-80">
-          <ResponsiveContainer width="100%" height={300}>
+        <div className="h-[360px]">
+          <ResponsiveContainer width="100%" height="100%">
             <LineChart data={replay}>
               <XAxis dataKey="hole" />
               <YAxis />
@@ -156,7 +222,7 @@ export default function Stats({
                 type="monotone"
                 dataKey="score"
                 stroke="#166534"
-                strokeWidth={3}
+                strokeWidth={4}
               />
             </LineChart>
           </ResponsiveContainer>

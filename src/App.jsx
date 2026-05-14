@@ -380,7 +380,15 @@ export default function App() {
   ),
 
   round: <RoundEntry rounds={rounds} setRounds={setRounds} />,
-  stats: <Stats rounds={rounds} />,
+  stats: (
+  <Stats
+    rounds={rounds}
+    courses={courses}
+    sortRounds={sortRounds}
+    avg={avg}
+    cn={cn}
+  />
+),
   live: <LiveRound rounds={rounds} setRounds={setRounds} />,
   coach: <CoachScreen rounds={rounds} />,
   finance: <FinanceScreen rounds={rounds} />,

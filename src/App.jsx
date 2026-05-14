@@ -1,3 +1,4 @@
+import MiniInput from "./components/MiniInput";
 import Trend from "./components/Trend";
 import Kpi from "./components/Kpi";
 import Card from "./components/Card";
@@ -207,15 +208,6 @@ function analysis(rounds) {
     weakness: [...holes].sort((a, b) => b.overPar - a.overPar)[0],
   };
 }
-function MiniInput({ label, value, onChange, type = "text" }) {
-  return (
-    <label className="rounded-[1.2rem] bg-white p-4 ring-1 ring-slate-200">
-      <div className="text-xs font-bold uppercase tracking-[0.14em] text-slate-600">{label}</div>
-      <input type={type} value={value ?? ""} onChange={(e) => onChange(e.target.value)} className="mt-3 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-4 text-2xl font-bold outline-none transition focus:border-emerald-500 focus:bg-white" />
-    </label>
-  );
-}
-
 function BarRow({ label, value }) {
   const safeValue = Math.max(6, Math.min(100, Number(value) || 0));
   return (

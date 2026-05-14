@@ -70,14 +70,14 @@ export default function Stats({ rounds, courses, sortRounds, avg, cn }) {
 
   if (diff > 1 && diff <= 2.5) {
     
-    levelColor = "bg-amber-100 text-amber-700";
-    cardStyle = "from-white to-amber-50 border-amber-200";
+  levelColor = "bg-amber-500/10 text-amber-700";
+  cardStyle = "from-white to-amber-50/40 border-amber-100";
   }
 
   if (diff > 2.5) {
     
-    levelColor = "bg-rose-100 text-rose-700";
-    cardStyle = "from-white to-rose-50 border-rose-200";
+  levelColor = "bg-rose-500/10 text-rose-700";
+  cardStyle = "from-white to-rose-50/40 border-rose-100";
   }
 
   return (

@@ -1,3 +1,4 @@
+import Card from "./components/Card";
 import React, { useState } from "react";
 import {
   Area,
@@ -204,11 +205,6 @@ function analysis(rounds) {
     weakness: [...holes].sort((a, b) => b.overPar - a.overPar)[0],
   };
 }
-
-function Card({ children, className = "" }) {
-  return <section className={cn("rounded-[1.35rem] border border-slate-200 bg-white p-6 shadow-[0_18px_45px_rgba(15,23,42,0.04)]", className)}>{children}</section>;
-}
-
 function Trend({ data, area = false, domain }) {
   return (
     <ResponsiveContainer width="100%" height="100%">

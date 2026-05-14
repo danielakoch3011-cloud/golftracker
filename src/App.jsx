@@ -1,3 +1,4 @@
+import FinanceLine from "./components/FinanceLine";
 import BarRow from "./components/BarRow";
 import MiniInput from "./components/MiniInput";
 import Trend from "./components/Trend";
@@ -393,11 +394,6 @@ function CoachScreen({ rounds }) {
   const ask = (q) => { if (!q.trim()) return; const res = q.toLowerCase().includes("hebel") ? `Dein größter Hebel ist Loch ${a.weakness?.n || 6}: ${a.weakness?.focus || "Ball im Spiel halten"}.` : "Fokus: Kontrolle, Tempo und klares Course Management."; setMessages([...messages, { role: "you", text: q }, { role: "coach", text: res }]); setInput(""); speak(res); };
   return <div className="grid gap-6 xl:grid-cols-[.9fr_1.1fr]"><Card className="bg-slate-950 p-8 text-white"><div className="text-xs font-bold uppercase tracking-[0.22em] text-emerald-300">Caddie Intelligence</div><div className="mt-7 text-6xl font-bold">AI</div><button onClick={() => speak("JARVIS online. GolfTrack Unicorn ist bereit.")} className="mt-8 rounded-2xl bg-emerald-500 px-5 py-4 font-bold text-black">Stimme testen</button></Card><Card><div className="mb-5 text-lg font-bold">Command Deck</div><div className="space-y-3 rounded-2xl bg-slate-50 p-4">{messages.map((m, i) => <div key={i} className={cn("max-w-[88%] rounded-2xl px-4 py-3 text-sm", m.role === "you" ? "ml-auto bg-emerald-800 text-white" : "bg-white")}>{m.text}</div>)}</div><div className="mt-4 flex gap-2"><input value={input} onChange={(e) => setInput(e.target.value)} className="flex-1 rounded-2xl bg-slate-100 px-4 py-3 outline-none" /><button onClick={() => ask(input)} className="rounded-2xl bg-slate-950 px-5 py-3 font-bold text-white">Senden</button></div></Card></div>;
 }
-
-function FinanceLine({ label, value, strong = false }) {
-  return <div className="flex items-center justify-between gap-4"><div className={cn("text-sm font-semibold", strong ? "text-slate-950" : "text-slate-600")}>{label}</div><div className={cn("font-bold", strong ? "text-2xl text-emerald-900" : "text-slate-800")}>{eur(value)}</div></div>;
-}
-
 function FinanceScreen({ rounds }) {
   const f = financeMetrics(rounds);
   const sorted = sortRounds(rounds);

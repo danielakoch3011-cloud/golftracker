@@ -109,8 +109,6 @@ export default function Stats({
                 <div className="mt-2 text-5xl font-black">
                   {x.n}
                 </div>
-
-                <div className="mt-4 flex items-center justify-between">
                   <div>
                     <div className="text-xs font-bold uppercase tracking-[0.12em] text-slate-400">
                       Durchschnitt

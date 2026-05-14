@@ -84,12 +84,12 @@ export default function Stats({ rounds, courses, sortRounds, avg, cn }) {
     <button
       key={x.n}
       onClick={() => setHole(x.n)}
-      className={cn(
-        "min-h-[210px] rounded-3xl border bg-gradient-to-br p-4 text-left transition-all duration-200"
-        cardStyle,
-        hole === x.n &&
-          "scale-[1.02] ring-2 ring-emerald-500 shadow-xl"
-      )}
+     className={cn(
+  "min-h-[210px] rounded-3xl border bg-gradient-to-br p-4 text-left transition-all duration-200",
+  cardStyle,
+  hole === x.n &&
+    "scale-[1.02] ring-2 ring-emerald-500 shadow-xl"
+)}
     >
       <div className="flex items-center justify-between">
         <div className="text-xs font-bold uppercase tracking-[0.14em] text-slate-500">

@@ -64,18 +64,18 @@ export default function Stats({ rounds, courses, sortRounds, avg, cn }) {
   const holeAvg = avg(rs.map((r) => r.holes?.[i]));
   const diff = holeAvg - x.par;
 
-  let level = "Gut";
+  
   let levelColor = "bg-emerald-100 text-emerald-800";
   let cardStyle = "from-white to-emerald-50 border-emerald-200";
 
   if (diff > 1 && diff <= 2.5) {
-    level = "Risiko";
+    
     levelColor = "bg-amber-100 text-amber-700";
     cardStyle = "from-white to-amber-50 border-amber-200";
   }
 
   if (diff > 2.5) {
-    level = "Problem";
+    
     levelColor = "bg-rose-100 text-rose-700";
     cardStyle = "from-white to-rose-50 border-rose-200";
   }
@@ -95,16 +95,7 @@ export default function Stats({ rounds, courses, sortRounds, avg, cn }) {
         <div className="text-xs font-bold uppercase tracking-[0.14em] text-slate-500">
           Loch
         </div>
-
-        <div
-          className={cn(
-            "rounded-full px-3 py-1 text-[11px] font-bold",
-            levelColor
-          )}
-        >
-          {level}
-        </div>
-      </div>
+</div>
 
       <div className="mt-3 text-6xl font-black">
         {x.n}

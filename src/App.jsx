@@ -376,17 +376,7 @@ export default function App() {
   const [tab, setTab] = useState("home");
   const [rounds, setRounds] = useState(loadRounds);
   const screens = {
-  home: (
-  <Home
-    rounds={rounds}
-    metrics={metrics}
-    analysis={analysis}
-    financeMetrics={financeMetrics}
-    mentalMetrics={mentalMetrics}
-    eur={eur}
-    mentalScore={mentalScore}
-  />
-),  home: <div>HOME TEMP</div>,
+  home: <div>HOME TEMP</div>,
   };
   return <Shell tab={tab} setTab={setTab}>{screens[tab]}</Shell>;
 }

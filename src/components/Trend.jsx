@@ -16,7 +16,7 @@ export default function Trend({
   domain,
 }) {
   return (
-    <ResponsiveContainer width="100%" height="100%">
+    <ResponsiveContainer width="100%" height={300}>
       {area ? (
         <AreaChart
           data={data}

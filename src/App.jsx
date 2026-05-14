@@ -1,3 +1,4 @@
+import Kpi from "./components/Kpi";
 import Card from "./components/Card";
 import React, { useState } from "react";
 import {
@@ -229,20 +230,6 @@ function Trend({ data, area = false, domain }) {
     </ResponsiveContainer>
   );
 }
-
-function Kpi({ icon, label, value, sub }) {
-  return (
-    <Card className="min-h-[160px]">
-      <div className="flex items-center gap-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-50 text-emerald-800">{icon}</div>
-        <div className="text-sm font-bold text-slate-700">{label}</div>
-      </div>
-      <div className="mt-5 text-4xl font-bold">{value}</div>
-      {sub && <div className="mt-3 text-sm font-medium text-slate-500">{sub}</div>}
-    </Card>
-  );
-}
-
 function MiniInput({ label, value, onChange, type = "text" }) {
   return (
     <label className="rounded-[1.2rem] bg-white p-4 ring-1 ring-slate-200">

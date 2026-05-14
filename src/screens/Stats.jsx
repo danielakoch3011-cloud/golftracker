@@ -64,11 +64,17 @@ export default function Stats({
                   setCourseKey(k);
                   setHole(1);
                 }}
-                className={cn(
-                  "rounded-xl px-4 py-2 text-sm font-bold transition",
-                  courseKey === k
-                    ? "bg-white shadow-sm"
-                    : "text-slate-500"
+               <div
+  className={cn(
+    "mt-3 inline-flex rounded-full px-2 py-1 text-xs font-bold",
+    diff <= 0
+      ? "bg-emerald-100 text-emerald-800"
+      : "bg-rose-100 text-rose-700"
+  )}
+>
+  {diff > 0 ? "+" : ""}
+  {diff.toFixed(1)}
+</div>
                 )}
               >
                 {c.name}

@@ -276,41 +276,6 @@ function RatingInputs({ form, setForm }) {
   const Slider = ({ group, k, label }) => <div><div className="mb-1 flex justify-between text-sm font-bold"><span>{label}</span><span>{form[group][k]}/10</span></div><input type="range" min="1" max="10" value={form[group][k]} onChange={(e) => setForm({ ...form, [group]: { ...form[group], [k]: e.target.value } })} className="w-full accent-emerald-800" /></div>;
   return <div className="mt-6 grid gap-6 xl:grid-cols-2"><Card className="bg-slate-50"><div className="mb-4 text-lg font-bold">Mental Check</div>{[["focus", "Fokus"], ["energy", "Energie"], ["frustration", "Frust"], ["confidence", "Selbstvertrauen"], ["management", "Course Mgmt"]].map(([k, l]) => <Slider key={k} group="mental" k={k} label={l} />)}</Card><Card className="bg-slate-50"><div className="mb-4 text-lg font-bold">Platz-Ranking</div>{[["overall", "Gesamt"], ["greens", "Greens"], ["fairways", "Fairways"], ["atmosphere", "Atmosphäre"]].map(([k, l]) => <Slider key={k} group="courseRating" k={k} label={l} />)}</Card></div>;
 }
-
-function LiveRound({ rounds, setRounds }) {
-  const [hole, setHole] = useState(1);
-  const [scores, setScores] = useState({});
-  const [sun, setSun] = useState(false);
-  const [saved, setSaved] = useState(false);
-  const course = courses.maxx;
-  const h = course.holes[hole - 1];
-  const total = Object.values(scores).reduce((s, v) => s + v, 0);
-  const played = Object.keys(scores).length;
-  const liveHoles = Array.from({ length: 9 }, (_, i) => Number(scores[i + 1]) || null);
-  const bestLiveHole = liveHoles
-    .map((score, i) => ({ n: i + 1, score, par: course.holes[i].par }))
-    .filter((x) => Number.isFinite(x.score))
-    .sort((a, b) => (a.score - a.par) - (b.score - b.par))[0];
-  const worstLiveHole = liveHoles
-    .map((score, i) => ({ n: i + 1, score, par: course.holes[i].par }))
-    .filter((x) => Number.isFinite(x.score))
-    .sort((a, b) => (b.score - b.par) - (a.score - a.par))[0];
-  const saveScore = (v) => {
-    setScores({ ...scores, [hole]: v });
-    if (window.speechSynthesis) window.speechSynthesis.speak(new SpeechSynthesisUtterance(`Loch ${hole}, Score ${v}`));
-  };
-  const finishRound = () => {
-    if (played !== 9) return;
-    const holes = Array.from({ length: 9 }, (_, i) => Number(scores[i + 1]) || 0);
-    const payload = { id: uid(), date: new Date().toISOString().slice(0, 10), courseKey: "maxx", total, holes, fir: 0, gir: 0, putts: 0, note: "Automatisch aus Live Caddie gespeichert", costs: { greenfee: 0, range: 0, food: 0, tournament: 0, other: 0 }, mental: { focus: 7, energy: 7, frustration: 3, confidence: 7, management: 7 }, courseRating: { overall: 8, greens: 7, fairways: 7, atmosphere: 8, playAgain: true } };
-    const updated = sortRounds([payload, ...rounds]);
-    setRounds(updated);
-    persist(updated);
-    setSaved(true);
-  };
-  return <div className="grid gap-6 xl:grid-cols-[1.15fr_.85fr]"><Card className={cn("bg-slate-950 p-8 text-white", sun && "bg-white text-black")}><div className="flex justify-between"><div><div className="text-xs font-bold uppercase tracking-[0.25em] text-emerald-400">Live Round</div><div className="mt-5 text-8xl font-bold">{hole}</div><div>Par {h.par} · HCP {h.hcp}</div></div><button onClick={() => setSun(!sun)} className="h-12 rounded-full bg-emerald-500 px-5 font-bold text-black">☀</button></div><div className="mt-8 rounded-3xl bg-white/10 p-6"><b>AI Caddie Briefing</b><p className="mt-3 text-2xl font-bold">{h.focus}. Kontrolle vor Risiko.</p></div><div className="mt-8 grid grid-cols-3 gap-4">{[h.par - 1, h.par, h.par + 1].map((v, i) => <button key={v} onClick={() => saveScore(v)} className="rounded-3xl bg-emerald-500 px-4 py-10 text-4xl font-black text-black">{v}<div className="text-xs">{["Birdie", "Par", "Bogey"][i]}</div></button>)}</div><div className="mt-6 grid grid-cols-2 gap-3"><button onClick={() => setHole(Math.max(1, hole - 1))} className="rounded-2xl bg-white/10 p-4 font-bold">← Zurück</button><button onClick={() => setHole(Math.min(9, hole + 1))} className="rounded-2xl bg-emerald-500 p-4 font-bold text-black">Weiter →</button></div><div className="mt-4 grid gap-3"><button onClick={finishRound} disabled={played !== 9 || saved} className={cn("rounded-2xl p-4 text-sm font-bold transition", played === 9 && !saved ? "bg-white text-black" : "bg-white/10 text-white/40")}>{saved ? "Runde gespeichert ✓" : "Live Runde speichern"}</button></div></Card><Card><div className="text-lg font-bold">Live Status</div><div className="mt-6 grid gap-4"><Kpi icon="Σ" label="Live Score" value={played ? total : "—"} sub={`${played}/9 gespielt`} /><Kpi icon="◉" label="Aktuelles Loch" value={hole} sub={h.focus} /></div>{saved && <div className="mt-6 rounded-2xl bg-emerald-50 p-5 ring-1 ring-emerald-100"><div className="text-xs font-bold uppercase tracking-[0.14em] text-emerald-700">Round Summary</div><div className="mt-3 text-3xl font-bold text-emerald-950">{total} Schläge</div><div className="mt-4 space-y-2 text-sm font-semibold text-emerald-900"><div>Bestes Loch: {bestLiveHole ? `Loch ${bestLiveHole.n} · ${bestLiveHole.score}` : "—"}</div><div>Schwerstes Loch: {worstLiveHole ? `Loch ${worstLiveHole.n} · ${worstLiveHole.score}` : "—"}</div><div>AI Hinweis: Runde gespeichert. Öffne Statistiken für den Lochverlauf.</div></div></div>}</Card></div>;
-}
-
 function CoachScreen({ rounds }) {
   const a = analysis(rounds);
   const [messages, setMessages] = useState([{ role: "coach", text: "System online. Frag mich: Was ist mein größter Hebel?" }]);
@@ -390,7 +355,17 @@ export default function App() {
     cn={cn}
   />
 ),
-  live: <LiveRound rounds={rounds} setRounds={setRounds} />,
+  live: (
+  <LiveRound
+    rounds={rounds}
+    setRounds={setRounds}
+    courses={courses}
+    cn={cn}
+    uid={uid}
+    sortRounds={sortRounds}
+    persist={persist}
+  />
+),
   coach: <CoachScreen rounds={rounds} />,
   finance: <FinanceScreen rounds={rounds} />,
   mental: <MentalScreen rounds={rounds} />,

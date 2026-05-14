@@ -108,7 +108,6 @@ export default function Stats({ rounds, courses, sortRounds, avg, cn }) {
           Ø {holeAvg.toFixed(1)}
         </div>
       </div>
-
       <div
         className={cn(
           "mt-4 inline-flex rounded-full px-3 py-1 text-xs font-bold",

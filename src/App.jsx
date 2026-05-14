@@ -20,7 +20,7 @@ const STORAGE_KEY = "golftrack_unicorn_rounds_v2";
 const TRAINING_KEY = "golftrack_unicorn_trainings_v1";
 
 const courses = {
-  maxx: {
+  
     name: "GolfMaxX Tuttenhof",
     holes: [
       [1, 4, 12, "Sicherer Start"],
@@ -135,7 +135,6 @@ function loadRounds() {
   } catch {
     return demoRounds;
   }
-}
 
 function persist(rounds) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(rounds));

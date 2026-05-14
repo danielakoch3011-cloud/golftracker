@@ -10,31 +10,18 @@ import {
   Tooltip,
 } from "recharts";
 
-export default function Stats({
-  rounds,
-  courses,
-  sortRounds,
-  avg,
-  cn,
-}) {
+export default function Stats({ rounds, courses, sortRounds, avg, cn }) {
   const [courseKey, setCourseKey] = useState("maxx");
   const [hole, setHole] = useState(1);
 
   const course = courses[courseKey];
-
-  const rs = sortRounds(rounds).filter(
-    (r) => r.courseKey === courseKey
-  );
-
+  const rs = sortRounds(rounds).filter((r) => r.courseKey === courseKey);
   const h = course.holes[hole - 1];
 
-  const trend = rs
-    .slice()
-    .reverse()
-    .map((r, i) => ({
-      round: i + 1,
-      score: Number(r.holes?.[hole - 1]) || null,
-    }));
+  const trend = rs.slice().reverse().map((r, i) => ({
+    round: i + 1,
+    score: Number(r.holes?.[hole - 1]) || null,
+  }));
 
   const replay =
     rs[0]?.holes?.map((score, i) => ({
@@ -45,12 +32,9 @@ export default function Stats({
   return (
     <div className="space-y-6">
       <Card>
-        <div className="mb-8 flex items-center justify-between">
+        <div className="mb-8 flex items-center justify-between gap-4">
           <div>
-            <div className="text-2xl font-bold">
-              Performance Heatmap
-            </div>
-
+            <div className="text-2xl font-bold">Performance Heatmap</div>
             <div className="mt-1 text-sm text-slate-500">
               Wähle ein Loch für Details.
             </div>
@@ -64,17 +48,9 @@ export default function Stats({
                   setCourseKey(k);
                   setHole(1);
                 }}
-               <div
-  className={cn(
-    "mt-3 inline-flex rounded-full px-2 py-1 text-xs font-bold",
-    diff <= 0
-      ? "bg-emerald-100 text-emerald-800"
-      : "bg-rose-100 text-rose-700"
-  )}
->
-  {diff > 0 ? "+" : ""}
-  {diff.toFixed(1)}
-</div>
+                className={cn(
+                  "rounded-xl px-4 py-2 text-sm font-bold transition",
+                  courseKey === k ? "bg-white shadow-sm" : "text-slate-500"
                 )}
               >
                 {c.name}
@@ -85,10 +61,7 @@ export default function Stats({
 
         <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-9">
           {course.holes.map((x, i) => {
-            const holeAvg = avg(
-              rs.map((r) => r.holes?.[i])
-            );
-
+            const holeAvg = avg(rs.map((r) => r.holes?.[i]));
             const diff = holeAvg - x.par;
 
             return (
@@ -106,22 +79,18 @@ export default function Stats({
                   Loch
                 </div>
 
-                <div className="mt-2 text-5xl font-black">
-                  {x.n}
-                </div>
-                  <div>
-                    <div className="text-xs font-bold uppercase tracking-[0.12em] text-slate-400">
-                      Durchschnitt
-                    </div>
+                <div className="mt-2 text-5xl font-black">{x.n}</div>
 
-                    <div className="text-xl font-bold">
-                      Ø {holeAvg.toFixed(1)}
-                    </div>
+                <div className="mt-4">
+                  <div className="text-xs font-bold uppercase tracking-[0.12em] text-slate-400">
+                    Durchschnitt
                   </div>
+
+                  <div className="text-xl font-bold">Ø {holeAvg.toFixed(1)}</div>
 
                   <div
                     className={cn(
-                      "rounded-full px-3 py-1 text-xs font-bold",
+                      "mt-3 inline-flex rounded-full px-2 py-1 text-xs font-bold",
                       diff <= 0
                         ? "bg-emerald-100 text-emerald-800"
                         : "bg-rose-100 text-rose-700"
@@ -141,20 +110,14 @@ export default function Stats({
         <Card>
           <div className="mb-6 flex items-center justify-between">
             <div>
-              <div className="text-2xl font-bold">
-                Loch {hole} Verlauf
-              </div>
-
+              <div className="text-2xl font-bold">Loch {hole} Verlauf</div>
               <div className="mt-1 text-sm text-slate-500">
                 Entwicklung deiner letzten Runden.
               </div>
             </div>
 
             <div className="rounded-2xl bg-emerald-50 px-4 py-2 text-sm font-bold text-emerald-800">
-              Ø{" "}
-              {avg(
-                rs.map((r) => r.holes?.[hole - 1])
-              ).toFixed(1)}
+              Ø {avg(rs.map((r) => r.holes?.[hole - 1])).toFixed(1)}
             </div>
           </div>
 
@@ -164,9 +127,7 @@ export default function Stats({
         </Card>
 
         <Card>
-          <div className="text-2xl font-bold">
-            Loch-Analyse
-          </div>
+          <div className="text-2xl font-bold">Loch-Analyse</div>
 
           <div className="mt-6 rounded-3xl bg-emerald-50 p-6">
             <div className="text-xs font-bold uppercase tracking-[0.16em] text-emerald-700">
@@ -182,20 +143,14 @@ export default function Stats({
                 <div className="text-xs font-bold uppercase tracking-[0.12em] text-slate-500">
                   Par
                 </div>
-
-                <div className="mt-1 text-3xl font-black">
-                  {h.par}
-                </div>
+                <div className="mt-1 text-3xl font-black">{h.par}</div>
               </div>
 
               <div className="rounded-2xl bg-white p-4">
                 <div className="text-xs font-bold uppercase tracking-[0.12em] text-slate-500">
                   HCP
                 </div>
-
-                <div className="mt-1 text-3xl font-black">
-                  {h.hcp}
-                </div>
+                <div className="mt-1 text-3xl font-black">{h.hcp}</div>
               </div>
             </div>
           </div>
@@ -203,15 +158,10 @@ export default function Stats({
       </div>
 
       <Card>
-        <div className="mb-6 flex items-center justify-between">
-          <div>
-            <div className="text-2xl font-bold">
-              Round Replay
-            </div>
-
-            <div className="mt-1 text-sm text-slate-500">
-              Verlauf deiner letzten Runde.
-            </div>
+        <div className="mb-6">
+          <div className="text-2xl font-bold">Round Replay</div>
+          <div className="mt-1 text-sm text-slate-500">
+            Verlauf deiner letzten Runde.
           </div>
         </div>
 
@@ -221,7 +171,6 @@ export default function Stats({
               <XAxis dataKey="hole" />
               <YAxis />
               <Tooltip />
-
               <Line
                 type="monotone"
                 dataKey="score"

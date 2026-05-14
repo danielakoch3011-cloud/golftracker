@@ -1,3 +1,4 @@
+import Stats from "./screens/Stats.jsx";
 import Home from "./screens/Home.jsx";
 import Shell from "./components/Shell.jsx";
 import FinanceLine from "./components/FinanceLine.jsx";
@@ -273,17 +274,6 @@ function FinanceInputs({ form, setForm }) {
 function RatingInputs({ form, setForm }) {
   const Slider = ({ group, k, label }) => <div><div className="mb-1 flex justify-between text-sm font-bold"><span>{label}</span><span>{form[group][k]}/10</span></div><input type="range" min="1" max="10" value={form[group][k]} onChange={(e) => setForm({ ...form, [group]: { ...form[group], [k]: e.target.value } })} className="w-full accent-emerald-800" /></div>;
   return <div className="mt-6 grid gap-6 xl:grid-cols-2"><Card className="bg-slate-50"><div className="mb-4 text-lg font-bold">Mental Check</div>{[["focus", "Fokus"], ["energy", "Energie"], ["frustration", "Frust"], ["confidence", "Selbstvertrauen"], ["management", "Course Mgmt"]].map(([k, l]) => <Slider key={k} group="mental" k={k} label={l} />)}</Card><Card className="bg-slate-50"><div className="mb-4 text-lg font-bold">Platz-Ranking</div>{[["overall", "Gesamt"], ["greens", "Greens"], ["fairways", "Fairways"], ["atmosphere", "Atmosphäre"]].map(([k, l]) => <Slider key={k} group="courseRating" k={k} label={l} />)}</Card></div>;
-}
-
-function Stats({ rounds }) {
-  const [courseKey, setCourseKey] = useState("maxx");
-  const [hole, setHole] = useState(1);
-  const course = courses[courseKey];
-  const rs = sortRounds(rounds).filter((r) => r.courseKey === courseKey);
-  const h = course.holes[hole - 1];
-  const trend = rs.slice().reverse().map((r, i) => ({ round: i + 1, score: Number(r.holes?.[hole - 1]) || null }));
-  const replay = rs[0]?.holes?.map((score, i) => ({ hole: `L${i + 1}`, score })) || [];
-  return <div className="space-y-6"><Card><div className="mb-5 flex justify-between gap-4"><div><div className="text-lg font-bold">Performance Heatmap</div><div className="text-sm text-slate-500">Klick auf ein Loch für Details.</div></div><div className="flex rounded-2xl bg-slate-100 p-1">{Object.entries(courses).map(([k, c]) => <button key={k} onClick={() => { setCourseKey(k); setHole(1); }} className={cn("rounded-xl px-4 py-2 text-xs font-bold", courseKey === k ? "bg-white" : "text-slate-500")}>{c.name}</button>)}</div></div><div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-9">{course.holes.map((x, i) => { const mini = rs.slice().reverse().map((r, j) => ({ round: j + 1, score: r.holes?.[i] })); return <button key={x.n} onClick={() => setHole(x.n)} className={cn("rounded-xl bg-white p-4 text-left ring-1 ring-slate-200", hole === x.n && "ring-2 ring-emerald-600")}><div className="text-sm font-bold text-slate-500">Loch</div><div className="text-4xl font-bold">{x.n}</div><div className="mt-2 text-sm font-semibold">Ø {avg(rs.map((r) => r.holes?.[i])).toFixed(1)}</div><div className="mt-3 h-12"><Trend data={mini} /></div></button>; })}</div></Card><div className="grid gap-6 xl:grid-cols-[1fr_360px]"><Card><div className="mb-5 text-lg font-bold">Loch {hole} Verlauf</div><div className="h-80"><Trend data={trend} area /></div></Card><Card><div className="text-lg font-bold">Loch-Analyse</div><div className="mt-5 rounded-2xl bg-emerald-50 p-4"><b>{h.focus}</b><p className="mt-2 text-sm text-slate-600">Par {h.par} · HCP {h.hcp}</p></div></Card></div><Card><div className="mb-5 text-lg font-bold">Round Replay</div><div className="h-80"><ResponsiveContainer width="100%" height="100%"><LineChart data={replay}><XAxis dataKey="hole" /><YAxis /><Tooltip /><Line type="monotone" dataKey="score" stroke="#166534" strokeWidth={3} /></LineChart></ResponsiveContainer></div></Card></div>;
 }
 
 function LiveRound({ rounds, setRounds }) {

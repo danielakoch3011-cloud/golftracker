@@ -20,7 +20,7 @@ const STORAGE_KEY = "golftrack_unicorn_rounds_v2";
 const TRAINING_KEY = "golftrack_unicorn_trainings_v1";
 
 const courses = {
-  
+  maxx: {
     name: "GolfMaxX Tuttenhof",
     holes: [
       [1, 4, 12, "Sicherer Start"],
@@ -121,6 +121,7 @@ function loadRounds() {
   try {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
     if (!Array.isArray(saved) || !saved.length) return demoRounds;
+
     const clean = saved
       .filter((r) => r && courses[r.courseKey] && Array.isArray(r.holes) && r.holes.length === 9)
       .map((r) => ({
@@ -131,10 +132,12 @@ function loadRounds() {
         mental: { focus: 5, energy: 5, frustration: 5, confidence: 5, management: 5, ...(r.mental || {}) },
         courseRating: { overall: 5, greens: 5, fairways: 5, atmosphere: 5, playAgain: true, ...(r.courseRating || {}) },
       }));
+
     return clean.length ? clean : demoRounds;
   } catch {
     return demoRounds;
   }
+}
 
 function persist(rounds) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(rounds));

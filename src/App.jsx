@@ -1,4 +1,3 @@
-import Home from "./screens/Home";
 import Shell from "./components/Shell";
 import FinanceLine from "./components/FinanceLine";
 import BarRow from "./components/BarRow";

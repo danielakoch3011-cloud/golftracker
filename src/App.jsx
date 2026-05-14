@@ -1,11 +1,11 @@
-import Home from "./screens/Home";
-import Shell from "./components/Shell";
-import FinanceLine from "./components/FinanceLine";
-import BarRow from "./components/BarRow";
-import MiniInput from "./components/MiniInput";
-import Trend from "./components/Trend";
-import Kpi from "./components/Kpi";
-import Card from "./components/Card";
+import Home from "./screens/Home.jsx";
+import Shell from "./components/Shell.jsx";
+import FinanceLine from "./components/FinanceLine.jsx";
+import BarRow from "./components/BarRow.jsx";
+import MiniInput from "./components/MiniInput.jsx";
+import Trend from "./components/Trend.jsx";
+import Kpi from "./components/Kpi.jsx";
+import Card from "./components/Card.jsx";
 import React, { useState } from "react";
 import {
   Area,

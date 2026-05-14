@@ -60,48 +60,82 @@ export default function Stats({ rounds, courses, sortRounds, avg, cn }) {
         </div>
 
         <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-9">
-          {course.holes.map((x, i) => {
-            const holeAvg = avg(rs.map((r) => r.holes?.[i]));
-            const diff = holeAvg - x.par;
+{course.holes.map((x, i) => {
+  const holeAvg = avg(rs.map((r) => r.holes?.[i]));
+  const diff = holeAvg - x.par;
 
-            return (
-              <button
-                key={x.n}
-                onClick={() => setHole(x.n)}
-                className={cn(
-                  "rounded-2xl border bg-white p-5 text-left transition",
-                  hole === x.n
-                    ? "border-emerald-600 ring-2 ring-emerald-100"
-                    : "border-slate-200 hover:border-emerald-300"
-                )}
-              >
-                <div className="text-xs font-bold uppercase tracking-[0.12em] text-slate-500">
-                  Loch
-                </div>
+  let level = "Gut";
+  let levelColor = "bg-emerald-100 text-emerald-800";
+  let cardStyle = "from-white to-emerald-50 border-emerald-200";
 
-                <div className="mt-2 text-5xl font-black">{x.n}</div>
+  if (diff > 1 && diff <= 2.5) {
+    level = "Risiko";
+    levelColor = "bg-amber-100 text-amber-700";
+    cardStyle = "from-white to-amber-50 border-amber-200";
+  }
 
-                <div className="mt-4">
-                  <div className="text-xs font-bold uppercase tracking-[0.12em] text-slate-400">
-                    Durchschnitt
-                  </div>
+  if (diff > 2.5) {
+    level = "Problem";
+    levelColor = "bg-rose-100 text-rose-700";
+    cardStyle = "from-white to-rose-50 border-rose-200";
+  }
 
-                  <div className="text-xl font-bold">Ø {holeAvg.toFixed(1)}</div>
+  return (
+    <button
+      key={x.n}
+      onClick={() => setHole(x.n)}
+      className={cn(
+        "rounded-3xl border bg-gradient-to-br p-5 text-left transition-all duration-200",
+        cardStyle,
+        hole === x.n &&
+          "scale-[1.02] ring-2 ring-emerald-500 shadow-xl"
+      )}
+    >
+      <div className="flex items-center justify-between">
+        <div className="text-xs font-bold uppercase tracking-[0.14em] text-slate-500">
+          Loch
+        </div>
 
-                  <div
-                    className={cn(
-                      "mt-3 inline-flex rounded-full px-2 py-1 text-xs font-bold",
-                      diff <= 0
-                        ? "bg-emerald-100 text-emerald-800"
-                        : "bg-rose-100 text-rose-700"
-                    )}
-                  >
-                    {diff > 0 ? "+" : ""}
-                    {diff.toFixed(1)}
-                  </div>
-                </div>
-              </button>
-            );
+        <div
+          className={cn(
+            "rounded-full px-3 py-1 text-[11px] font-bold",
+            levelColor
+          )}
+        >
+          {level}
+        </div>
+      </div>
+
+      <div className="mt-3 text-6xl font-black">
+        {x.n}
+      </div>
+
+      <div className="mt-2 text-sm font-bold text-slate-500">
+        Par {x.par} • HCP {x.hcp}
+      </div>
+
+      <div className="mt-6">
+        <div className="text-xs font-bold uppercase tracking-[0.14em] text-slate-400">
+          Durchschnitt
+        </div>
+
+        <div className="mt-1 text-3xl font-black">
+          Ø {holeAvg.toFixed(1)}
+        </div>
+      </div>
+
+      <div
+        className={cn(
+          "mt-4 inline-flex rounded-full px-3 py-1 text-xs font-bold",
+          levelColor
+        )}
+      >
+        {diff > 0 ? "+" : ""}
+        {diff.toFixed(1)} vs Par
+      </div>
+    </button>
+  );
+})}
           })}
         </div>
       </Card>
